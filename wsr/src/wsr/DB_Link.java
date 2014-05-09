@@ -1,4 +1,8 @@
 package wsr;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *   DB_Link.java --- Interactive packet manipulation tool
  *
@@ -55,5 +59,35 @@ public class DB_Link //extends Client
     DB.printTable(table);
   }
 
+  public ResultSet getTable() {
+	  return DB.getTable(table);
+	  
+  }
+  
+  
+  
+  
+  public int totalEntries() throws ClassNotFoundException {
+	  
+	  ResultSet rs = DB.getTable(table);
+	  
+	 // public void DisplayDataBase(ResultSet rs) {
+		  	int i = 0;
+		    try {
+		      while(rs.next()) {
+  
+		    	i++;  
+		      }
+		    }
+		    catch(SQLException e)
+		    {
+		      System.err.println(e.getMessage());
+		    }  
+	    
+	  return i;
+  }
+  
+  
+  
 }
 

@@ -145,7 +145,10 @@ public class Run
           break;
 
         case 5:
-          System.out.println("\n\n   Printing Report     \n\n");
+        	 
+            System.out.println("\n\n   Printing Report     \n\n");
+
+          System.out.println("Total number of entries: "+ link.totalEntries());
           link.printTable();
           break;
 

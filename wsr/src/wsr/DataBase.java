@@ -15,7 +15,7 @@ package wsr;
  */
 
 
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,9 +149,11 @@ public class DataBase //extends Client
     return client_test;
   }
 
+  
 
   public void printTable(String table) throws ClassNotFoundException {
     String cmd = "select * from '" + table +"'"; //print all
+    
     try
     {
       rs = statement.executeQuery(cmd); //print all
@@ -170,6 +172,21 @@ public class DataBase //extends Client
     }
   }
 
+  public ResultSet getTable(String table) {
+	  String cmd = "select * from '" + table +"'"; //print all
+	  try
+	    {
+	      rs = statement.executeQuery(cmd); //print all
+	       
+	    }
+	    catch(SQLException e)
+	    {
+	      System.err.println(e.getMessage());
+	    }
+	  
+	  return rs;
+  }
+  
 
   public void deleteById(String table, String id) throws ClassNotFoundException {
     String cmd = "delete from '" + table + "'where ID =" + id;
