@@ -1,19 +1,19 @@
 package wsr;
 /*
-*   Client.java --- Interactive packet manipulation tool
-*
-*   Author: Juan Carlos Torres
-*
-*
-*   $Log:  Clien.java
-*
-*   Revision 1.0.0  04/30/2014
-*    - Added all the necessary object attributes for the database
-*
-*
-*/
+ *   Client.java --- Interactive packet manipulation tool
+ *
+ *   Author: Juan Carlos Torres
+ *
+ *
+ *   $Log:  Clien.java
+ *
+ *   Revision 1.0.0  04/30/2014
+ *    - Added all the necessary object attributes for the database
+ *
+ *
+ */
 
- 
+
 public class Client {
 
   private String FirstName;
@@ -178,9 +178,9 @@ public class Client {
   }
 
   public  String GetFilePath(){
-//    String userDir = System.getProperty("user.dir");
-//    return userDir + "/Users/" + ID;
-return FilePath;
+    //    String userDir = System.getProperty("user.dir");
+    //    return userDir + "/Users/" + ID;
+    return FilePath;
   }
 
   public void printAll(Client temp){
@@ -189,5 +189,5 @@ return FilePath;
         temp.GetPhone()+ ", " + temp.GetGender()+ ", " + temp.GetFilePath()+ ", " + temp.GetRank());
 
   }
- 
+
 }

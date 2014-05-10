@@ -60,34 +60,34 @@ public class DB_Link //extends Client
   }
 
   public ResultSet getTable() {
-	  return DB.getTable(table);
-	  
+    return DB.getTable(table);
+
   }
-  
-  
-  
-  
+
+
+
+
   public int totalEntries() throws ClassNotFoundException {
-	  
-	  ResultSet rs = DB.getTable(table);
-	  
-	 // public void DisplayDataBase(ResultSet rs) {
-		  	int i = 0;
-		    try {
-		      while(rs.next()) {
-  
-		    	i++;  
-		      }
-		    }
-		    catch(SQLException e)
-		    {
-		      System.err.println(e.getMessage());
-		    }  
-	    
-	  return i;
+
+    ResultSet rs = DB.getTable(table);
+
+    // public void DisplayDataBase(ResultSet rs) {
+    int i = 0;
+    try {
+      while(rs.next()) {
+
+        i++;  
+      }
+    }
+    catch(SQLException e)
+    {
+      System.err.println(e.getMessage());
+    }  
+
+    return i;
   }
-  
-  
-  
+
+
+
 }
 

@@ -28,7 +28,7 @@ public class Run
   public static Scanner input = new Scanner(System.in);
   public static String table = "db_clients";
   public static Client client_test;
-   public static FileSystem FS;
+  public static FileSystem FS;
 
   public Run(){
     firstName = "";
@@ -41,7 +41,7 @@ public class Run
   public static void main(String[] args) throws ClassNotFoundException {
     DB_Link link = new DB_Link();
     client_test = new Client();
-  
+
     FS = new FileSystem();
     //print table
     link.printTable();
@@ -145,8 +145,8 @@ public class Run
           break;
 
         case 5:
-        	 
-            System.out.println("\n\n   Printing Report     \n\n");
+
+          System.out.println("\n\n   Printing Report     \n\n");
 
           System.out.println("Total number of entries: "+ link.totalEntries());
           link.printTable();
