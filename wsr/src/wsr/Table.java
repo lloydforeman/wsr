@@ -18,6 +18,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import javax.swing.*;
 
+import com.itextpdf.text.DocumentException;
+
 
 
 public class Table extends JFrame implements ActionListener
@@ -30,6 +32,7 @@ public class Table extends JFrame implements ActionListener
   public DB_Link link;  
   Container contentPane;
   Client client;
+  TextFields textfield;
 
   //For Table
   String col[] = {"ID","Last Name","Fisrt Name","Gender"};	 	  
@@ -190,14 +193,21 @@ for (int i = 0; i < listOfFiles.length; i++)
   	 final String nami = files;
 button[i].addActionListener( new ActionListener(){
 	String fileName = "/Users/JC/Documents/workspace/wsr//Users/" + ID + "/" + nami;
-  public void actionPerformed(ActionEvent ae) {
+   public void actionPerformed(ActionEvent ae) {
     	if (Desktop.isDesktopSupported()) {
   	    try {
    	        File myFile = new File(fileName);
   	        Desktop.getDesktop().open(myFile);
+  	      TextFields.fillFields(fileName,nami,ID);///////////////////////
   	    } catch (IOException ex) {
   	        // no application registered for PDFs
-  	    }
+  	    } catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
   	}  
   }
 } ); //Listener
@@ -468,7 +478,7 @@ addNew.addActionListener( new ActionListener(){
      return gui;
  }
 	
-/*
+ 
  
   public static void main(String[] args) throws ClassNotFoundException {
 	    final Table db_tb = new Table();
@@ -505,7 +515,7 @@ addNew.addActionListener( new ActionListener(){
 	    SwingUtilities.invokeLater(r);
 	  }
   
-  */
+   
 	}
 
 

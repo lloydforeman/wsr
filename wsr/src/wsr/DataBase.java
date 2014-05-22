@@ -82,7 +82,7 @@ public class DataBase //extends Client
       String DOB, String Age, String City, String State, String Zip, String County, String Phone,
       String Gender, String FilePath, String Rank) {
 
-    String cmd2 = "insert into " + table + " values('" + ID +"', '" + LastName + "', '" + FirstName + "', '" + Address + "', '" +
+    String cmd2 = "insert into " + table + " values('" + ID +"', '" + FirstName + "', '" + LastName + "', '" + Address + "', '" +
       DOB  + "', '" + Age  + "', '" + City  + "', '" + State  + "', '" + Zip  + "', '" + County  + "', '" + Phone  + "', '" +
       Gender  + "', '" + FilePath + "', '" + Rank + "')";
 

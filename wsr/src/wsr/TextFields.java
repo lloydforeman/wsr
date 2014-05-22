@@ -16,6 +16,8 @@ import java.util.Set;
 
 
 
+
+
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.AcroFields.Item;
@@ -29,9 +31,10 @@ public class TextFields {
 
 
   //retrieve information from pdf form
-  public static void retrieveFields(String path) throws FileNotFoundException, DocumentException, IOException{
+  public static void retrieveFields(String path) throws FileNotFoundException, DocumentException, IOException, ClassNotFoundException{
 
     Client client = new Client(); // client object
+    DB_Link link = new DB_Link();//database link object
     PdfReader pdfReader = new PdfReader(path);
     AcroFields acroFields = pdfReader.getAcroFields();
     HashMap<String,AcroFields.Item> fields = (HashMap<String, Item>) acroFields.getFields();
@@ -43,50 +46,50 @@ public class TextFields {
     for (Entry<String, Item> entry : entrySet) {
       String key = entry.getKey();
       if(key.equalsIgnoreCase("FIRST")) {
-        client.SetFirstName(key);
+        client.SetFirstName(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("LAST")){
-        client.SetLastName(key);
+        client.SetLastName(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("ADDRESS")){
-        client.SetAddress(key);
+        client.SetAddress(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("CITY")){
-        client.SetCity(key);
+        client.SetCity(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("STATE")){
-        client.SetState(key);
+        client.SetState(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("ZIP")){
-        client.SetZip(key);
+        client.SetZip(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("COUNTY")){
-        client.SetCounty(key);
+        client.SetCounty(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("DOB1")){
-        dob1 = key;
+        dob1 = acroFields.getField(key);
       }
       else if(key.equalsIgnoreCase("DOB2")){
-        dob2 = key;
+        dob2 = acroFields.getField(key);
       }
       else if(key.equalsIgnoreCase("DOB3")){
-        dob3 = key;
+        dob3 = acroFields.getField(key);
       }
       else if(key.equalsIgnoreCase("AGE")){
-        client.SetAge(key);
+        client.SetAge(acroFields.getField(key));
       }
       else if(key.equalsIgnoreCase("LOG#")){
-        //client.SetID(Integer.parseInt(key));
+       client.SetID(acroFields.getField(key));
 
       }
       else if(key.equalsIgnoreCase("PHONE1")){
-        phone1 = key;
+        phone1 = acroFields.getField(key);
       }
       else if(key.equalsIgnoreCase("PHONE2")){
-        phone2 = key;
+        phone2 = acroFields.getField(key);
       }
       else if(key.equalsIgnoreCase("PHONE3")){
-        phone3 = key;
+        phone3 = acroFields.getField(key);;
       }
 
 
@@ -94,7 +97,7 @@ public class TextFields {
     }
     //if DOB is on form build DOB
     if(!dob1.equals(null)&&!dob2.equals(null)&&!dob3.equals(null)) {
-      String dob = dob1+" "+dob2+" "+dob3;
+      String dob = dob1+"/"+dob2+"/"+dob3;
       client.SetDOB(dob);
     }
     //if Phone# is on form build phone number
@@ -103,11 +106,15 @@ public class TextFields {
       client.SetPhone(phone);
     }
     pdfReader.close();//close reader
+    client.SetFilePath("/Users/JC/Documents/workspace/wsr/Users/"+client.GetID());
+    client.SetGender("Male");
+    client.SetRank("INACTIVE");
+    link.insert(client);
 
   }
 
   //fill fields in pdf
-  public static void fillFields(String path,String fileName) throws IOException, DocumentException {
+  public static void fillFields(String path,String fileName, String id) throws IOException, DocumentException, ClassNotFoundException {
     PdfReader pdfReader = new PdfReader(path);
     PdfStamper filledOut = new PdfStamper(pdfReader, new FileOutputStream(fileName));//stores new filled out pdf in local directory
     AcroFields acroFields = filledOut.getAcroFields();
@@ -115,55 +122,48 @@ public class TextFields {
     Set<Entry<String, Item>> entrySet = fields.entrySet(); //stores name so of acrofields
     Locale locale = Locale.US;
     Calendar now = Calendar.getInstance(locale);
+    DB_Link link = new DB_Link();//database link object
+    Client client = link.searchById(id);
+    Boolean ThreeFieldFormatDate = false;
+    Boolean ThreeFieldFormatPhone = false;
 
 
     //parse field names for fillable fields
     for (Entry<String, Item> entry : entrySet) {
       String key = entry.getKey();
       if(key.equalsIgnoreCase("FIRST")) {
-        acroFields.setField(key,"Lloyd");
+        acroFields.setField(key,client.GetFirstName());
       }
       else if(key.equalsIgnoreCase("LAST")){
-        acroFields.setField(key,"Foreman");
+        acroFields.setField(key,client.GetLastName());
       }
       else if(key.equalsIgnoreCase("ADDRESS")){
-        acroFields.setField(key,"123 Main St");
+        acroFields.setField(key,client.GetAddress());
       }
       else if(key.equalsIgnoreCase("CITY")){
-        acroFields.setField(key,"Sacramento");
+        acroFields.setField(key,client.GetCity());
       }
       else if(key.equalsIgnoreCase("STATE")){
-        acroFields.setField(key,"CA");
+        acroFields.setField(key,client.GetState());
       }
       else if(key.equalsIgnoreCase("ZIP")){
-        acroFields.setField(key,"12345");
+        acroFields.setField(key,client.GetZip());
       }
       else if(key.equalsIgnoreCase("COUNTY")){
-        acroFields.setField(key,"Yolo");
+        acroFields.setField(key,client.GetCounty());
       }
       else if(key.equalsIgnoreCase("LOG#")){
-        acroFields.setField(key,"1234");
+        acroFields.setField(key,client.GetID());
       }
       else if(key.equalsIgnoreCase("DOB1")){
-        acroFields.setField(key,"03");
+    	ThreeFieldFormatDate = true;
       }
-      else if(key.equalsIgnoreCase("DOB2")){
-        acroFields.setField(key,"27");
-      }
-      else if(key.equalsIgnoreCase("DOB3")){
-        acroFields.setField(key,"1992");
-      }
+      
       else if(key.equalsIgnoreCase("AGE")){
-        acroFields.setField(key,"22");
+        acroFields.setField(key,client.GetAge());
       }
       else if(key.equalsIgnoreCase("PHONE1")){
-        acroFields.setField(key,"925");
-      }
-      else if(key.equalsIgnoreCase("PHONE2")){
-        acroFields.setField(key,"405");
-      }
-      else if(key.equalsIgnoreCase("PHONE3")){
-        acroFields.setField(key,"7233");
+        ThreeFieldFormatPhone = true;
       }
       else if(key.equalsIgnoreCase("DATE1")){
         acroFields.setField(key,Integer.toString(now.get(Calendar.MONTH)));
@@ -175,9 +175,25 @@ public class TextFields {
         acroFields.setField(key,Integer.toString(now.get(Calendar.YEAR)));
       }
       else if(key.equalsIgnoreCase("NAME")){
-        acroFields.setField(key,"Lloyd Foreman");
+    	String first = client.GetFirstName();
+    	String last = client.GetLastName();
+        acroFields.setField(key,first+" "+last);
       }
 
+    }
+    if(ThreeFieldFormatPhone == true){
+    	String phone = client.GetPhone();
+    	String[] split = phone.split("-");
+    	acroFields.setField("PHONE1",split[0]);
+    	acroFields.setField("PHONE2",split[1]);
+    	acroFields.setField("PHONE3",split[2]);
+    }
+    if(ThreeFieldFormatDate == true) {
+    	String phone = client.GetDOB();
+    	String[] split = phone.split("/");
+    	acroFields.setField("DOB1",split[0]);
+    	acroFields.setField("DOB2",split[1]);
+    	acroFields.setField("DOB3",split[2]);
     }
     filledOut.close();//close stamper
     pdfReader.close();//close reader
@@ -218,17 +234,19 @@ public class TextFields {
 
     String path = "/Users/lloydforeman/Downloads/WSR Feb 24 Updates/WSR Client File 2014/pdfs/panel 1/1-Screening & Client Information.pdf";
     String fileName = "1-Screening & Client Information.pdf";
+    String id ="2122";
     try {
-      fillFields(path,fileName);
+        retrieveFields(path);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      fillFields(path,fileName,id);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    try {
-      retrieveFields(path);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    
 
   }
 
