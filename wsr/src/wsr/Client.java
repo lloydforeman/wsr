@@ -1,41 +1,39 @@
 package wsr;
 /*
-*
+ *   Client.java --- Interactive packet manipulation tool
+ *
+ *   Author: Juan Carlos Torres
+ *
+ *
+ *   $Log:  Clien.java
+ *
+ *   Revision 1.0.0  04/30/2014
+ *    - Added all the necessary object attributes for the database
+ *
+ *
+ */
 
-* Linking Code.
-*
-*/
-
-import java.io.File;
 
 public class Client {
 
-public String FirstName;
-public String LastName;
-public String Address;
-public String DOB;
-public String Age;
-public String City;
-public String State;
-public String Zip;
-public String County;
-public String Phone;
-private String Gender;
-private String FilePath;
-private int ID;
-private int Rank;
+  private String FirstName;
+  private String LastName;
+  private String Address;
+  private String DOB;
+  private String Age;
+  private String City;
+  private String State;
+  private String Zip;
+  private String County;
+  private String Phone;
+  private String Gender;
+  private String FilePath;
+  private String ID;
+  private String Rank;
 
-public Client() {
-    FirstName ="";
-    LastName ="";
-    Gender = "";
-    ID = 0;
-    Rank = 0;
-}
-
-public Client(String First, String Last) {
-    FirstName = First;
-    LastName = Last;
+  public Client() {
+    FirstName = "";
+    LastName = "";
     Address = "";
     DOB = "";
     Age = "";
@@ -45,14 +43,15 @@ public Client(String First, String Last) {
     County = "";
     Phone = "";
     Gender = "";
-    ID = 0;
-    Rank = 0;
-}
+    FilePath = "";
+    ID = "";
+    Rank = "";
+  }
 
-public Client(String First, String Last, String address, String dob, String age,
-	   String city, String state, String zip, String county, String phone, String gender, int id) {
-    
-	FirstName = First;
+  public Client(String First, String Last, String address, String dob, String age, String filepath, String rank,
+      String city, String state, String zip, String county, String phone, String gender, String id) {
+
+    FirstName = First;
     LastName = Last;
     Address = address;
     DOB = dob;
@@ -64,140 +63,131 @@ public Client(String First, String Last, String address, String dob, String age,
     Zip = zip;
     Gender = gender;
     ID = id;
-}
+    FilePath = filepath;
+    Rank = rank;
+  }
 
 
-public String getPhone() {
-	return Phone;
-}
+  public String GetPhone() {
+    return Phone;
+  }
 
-public void setPhone(String phone) {
-	Phone = phone;
-}
+  public void SetPhone(String phone) {
+    Phone = phone;
+  }
 
-public String getCounty() {
-	return County;
-}
+  public String GetCounty() {
+    return County;
+  }
 
-public void setCounty(String county) {
-	County = county;
-}
+  public void SetCounty(String county) {
+    County = county;
+  }
 
-public String getAddress() {
-	return Address;
-}
+  public String GetAddress() {
+    return Address;
+  }
 
-public void setAddress(String address) {
-	Address = address;
-}
+  public void SetAddress(String address) {
+    Address = address;
+  }
 
-public String getDOB() {
-	return DOB;
-}
+  public String GetDOB() {
+    return DOB;
+  }
 
-public void setDOB(String dOB) {
-	DOB = dOB;
-}
+  public void SetDOB(String dOB) {
+    DOB = dOB;
+  }
 
-public String getAge() {
-	return Age;
-}
+  public String GetAge() {
+    return Age;
+  }
 
-public void setAge(String age) {
-	Age = age;
-}
+  public void SetAge(String age) {
+    Age = age;
+  }
 
-public String getCity() {
-	return City;
-}
+  public String GetCity() {
+    return City;
+  }
 
-public void setCity(String city) {
-	City = city;
-}
+  public void SetCity(String city) {
+    City = city;
+  }
 
-public String getState() {
-	return State;
-}
+  public String GetState() {
+    return State;
+  }
 
-public void setState(String state) {
-	State = state;
-}
+  public void SetState(String state) {
+    State = state;
+  }
 
-public String getZip() {
-	return Zip;
-}
+  public String GetZip() {
+    return Zip;
+  }
 
-public void setZip(String zip) {
-	Zip = zip;
-}
+  public void SetZip(String zip) {
+    Zip = zip;
+  }
 
-public void SetFirstName(String first) {
-  FirstName = first;
-}
+  public void SetFirstName(String first) {
+    FirstName = first;
+  }
 
-public String GetFirstName() {
-  return FirstName;
-}
+  public String GetFirstName() {
+    return FirstName;
+  }
 
-public void SetLastName(String last) {
-  LastName = last;
-}
+  public void SetLastName(String last) {
+    LastName = last;
+  }
 
-public String GetLastName() {
-  return LastName;
-}
+  public String GetLastName() {
+    return LastName;
+  }
 
-public void SetGender(String gender) {
+  public void SetGender(String gender) {
     Gender = gender;
-}
+  }
 
-public String GetGender() {
+  public String GetGender() {
     return Gender;
-}
+  }
 
-public void SetID(int id) {
+  public void SetID(String id) {
     ID = id;
-}
+  }
 
-public int GetID() {
+  public String GetID() {
     return ID;
-}
-
-public void SetRank(String rank) {
-  if (rank.equals("USER")){
-    Rank = 0;
   }
-    else if (rank.equals("ADMIN")) {
-        Rank = 1;
-    }
-}
 
-public int GetRank() {
+  public void SetRank(String rank) {
+    Rank = rank;
+  }
+
+  public String GetRank() {
     return Rank;
-}
-
-
-
-public static void makefile(int ID){
-
-  String userDir = System.getProperty("user.dir");
-  File rootDir = File.listRoots()[0];
-  File dir = new File(new File(userDir, "Users"), Integer.toString(ID));
-  if (!dir.exists()){
-        dir.mkdirs();
   }
-}
 
-public  static String getClientPath(int ID){
-  String userDir = System.getProperty("user.dir");
-     return userDir + "Users/" + ID;
-}
+  public void SetFilePath(String path){
+    FilePath = path;
 
-public static void main(String[] args) {
-    System.out.println("Hello World!");
-    makefile(001);
- String dir = getClientPath(001);
-    System.out.println(dir);
+  }
 
-}
+  public  String GetFilePath(){
+    //    String userDir = System.getProperty("user.dir");
+    //    return userDir + "/Users/" + ID;
+    return FilePath;
+  }
+
+  public void printAll(Client temp){
+    System.out.println(temp.GetID()+ ", " + temp.GetFirstName()+ ", " + temp.GetLastName()+ ", " + temp.GetAddress() + ", " +
+        temp.GetDOB()+ ", " + temp.GetAge()+ ", " + temp.GetCity()+ ", " + temp.GetState()+ ", " + temp.GetZip()+ ", " + temp.GetCounty() + ", " +
+        temp.GetPhone()+ ", " + temp.GetGender()+ ", " + temp.GetFilePath()+ ", " + temp.GetRank());
+
+  }
+
 }
