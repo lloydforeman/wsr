@@ -150,7 +150,7 @@ public class Table extends JFrame implements ActionListener
 	public JPanel sideBar(final String ID){
 		
 JPanel dynamicLabels = new JPanel(new BorderLayout(4,4));
-dynamicLabels.setBorder(new TitledBorder("Forms") );	
+dynamicLabels.setBorder(new TitledBorder("Forms Available") );	
 		
 final JPanel labels = new JPanel(new GridLayout(0,2,3,3));
 labels.setBorder(new TitledBorder("Forms Available") );
