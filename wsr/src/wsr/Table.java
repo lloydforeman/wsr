@@ -1,29 +1,24 @@
 package wsr;
 
 import java.awt.*;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.regex.PatternSyntaxException;
-
-
 
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import javax.swing.*;
+
+
 
 public class Table extends JFrame implements ActionListener
 {
@@ -33,7 +28,8 @@ public class Table extends JFrame implements ActionListener
   public static FileSystem FS;
   public Statement statement;
   public DB_Link link;  
-
+  Container contentPane;
+  Client client;
 
   //For Table
   String col[] = {"ID","Last Name","Fisrt Name","Gender"};	 	  
@@ -56,16 +52,18 @@ public class Table extends JFrame implements ActionListener
 
   JButton enterButton;
 
-  Container contentPane;    
 
-
+  
+  
 
   public Table() throws ClassNotFoundException{
     /*
      * Initialize classes
      */
     link = new DB_Link();
-
+    client = new Client();
+    FS = new FileSystem();
+    
     /*
      * For the table
      */
@@ -76,10 +74,15 @@ public class Table extends JFrame implements ActionListener
 
   }
 
+  
+  
+  
 
   public JScrollPane db_table() throws ClassNotFoundException 
   {
 
+	  //add_new_client();
+	//  mainProfile();
     /*
      * Make the UI_table
      */
@@ -97,7 +100,20 @@ public class Table extends JFrame implements ActionListener
     cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {				   
-        selectedData = (String) table.getValueAt(table.getSelectedRows()[0], 0);		
+        selectedData = (String) table.getValueAt(table.getSelectedRows()[0], 0);	
+ 
+ 
+              try {
+      			client = link.searchById(selectedData);
+  				//JOptionPane.showMessageDialog(null, mainProfile(client),"New Client",0);
+				JOptionPane.showMessageDialog(null, mainLayout(client),"Client",JOptionPane.PLAIN_MESSAGE);
+
+				
+			} catch (HeadlessException e1) {
+ 				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+ 				e1.printStackTrace();
+			}
       }
     });
 
@@ -105,6 +121,7 @@ public class Table extends JFrame implements ActionListener
     return pane;
   }
 
+  
   /*
    * Call an object of the ResutlSet to display all the data available on the database
    * 
@@ -126,96 +143,140 @@ public class Table extends JFrame implements ActionListener
     }  
   }
 
+   
   /*
-   * This is the seach bar to seach on the table  
-   */
-  public JPanel searchField() {
+	 * SIDEBAR
+	 */
+	public JPanel sideBar(final String ID){
+		
+JPanel dynamicLabels = new JPanel(new BorderLayout(4,4));
+dynamicLabels.setBorder(new TitledBorder("Forms") );	
+		
+final JPanel labels = new JPanel(new GridLayout(0,2,3,3));
+labels.setBorder(new TitledBorder("Forms Available") );
 
-    JPanel panel = new JPanel(new BorderLayout());
-    JLabel label = new JLabel("Search");
-    panel.add(label, BorderLayout.WEST);
+ 
+ String path = "/Users/JC/Documents/workspace/wsr/Users/"+ID; 
 
-    /// this is the text to appear on the search space      
-    final JTextField filterText = new JTextField(""); 
+String files;
+File folder = new File(path);
+if (!folder.exists()) { //if FOLDER DEOS NOT EXIST IT RETURNS 
+	return dynamicLabels;
+}
 
-    /*
-     * adds panel with a filter to the pane
-     */
-    panel.add(filterText, BorderLayout.CENTER);
+File[] listOfFiles = folder.listFiles(); 
 
-    // button
-    JButton button = new JButton("Search");				  			        
-    button.addActionListener(new ActionListener() {        	
-      public void actionPerformed(ActionEvent e) {
-        String text = filterText.getText();
-        if (text.length() == 0) {
-          sorter.setRowFilter(null);
-        } else {
-          try {
-            sorter.setRowFilter(
-              RowFilter.regexFilter(text));
-          } catch (PatternSyntaxException pse) {
-            System.err.println("Bad regex pattern");
-          }
-        }
-      }
-    });
 
-    panel.add(button, BorderLayout.EAST);
 
-    return panel;
+
+if (listOfFiles.length >= 1){ //CHECK TO SEE IF THERE IS MORE THAN 1 PDF 
+ 
+final JPanel d= new JPanel(new GridLayout((int)((listOfFiles.length)/2)+1,(int)((listOfFiles.length)/4)+1));
+JButton button[] = new JButton[listOfFiles.length];
+
+for (int i = 0; i < listOfFiles.length; i++) 
+{
+ if (listOfFiles[i].isFile()) 
+ {
+ files = listOfFiles[i].getName();
+     if (files.endsWith(".pdf") || files.endsWith(".PDF"))
+     {
+     	 button[i] = new JButton();
+          button[i].setText(files); //adds txt to buttons
+    	 d.add(button[i]);  //adds buttons to JPane
+
+    	
+//listener
+  	 final String nami = files;
+button[i].addActionListener( new ActionListener(){
+	String fileName = "/Users/JC/Documents/workspace/wsr//Users/" + ID + "/" + nami;
+  public void actionPerformed(ActionEvent ae) {
+    	if (Desktop.isDesktopSupported()) {
+  	    try {
+   	        File myFile = new File(fileName);
+  	        Desktop.getDesktop().open(myFile);
+  	    } catch (IOException ex) {
+  	        // no application registered for PDFs
+  	    }
+  	}  
   }
+} ); //Listener
+     }
+     }
+ }
+ 
+//dynamicLabels.add( new JScrollPane(labels), BorderLayout.CENTER );
+dynamicLabels.add( new JScrollPane(d), BorderLayout.SOUTH );
 
-  /*
-   * Returns selected data from the table
-   */
-  public String getSelectedData() {
-    return selectedData;
-  }
-
-
-
-
+}
 
 
 
+//THIS WILL BE USED TO DISPLAY ALL THE FORMS AVAILABLE
+
+///button
+JButton addNew = new JButton("New Form");
+dynamicLabels.add( addNew, BorderLayout.NORTH );
+
+//listener
+addNew.addActionListener( new ActionListener(){
+    public void actionPerformed(ActionEvent ae) {
+        labels.add( new JLabel("Label " + 1) );
+        //frame.validate();
+     
+    }
+} ); //Listener
+
+//dynamicLabels.add( new JScrollPane(labels), BorderLayout.CENTER );
 
 
-  /*
-   * Generates the text fields behind the table
-   */
-  public JPanel userProfile() throws ClassNotFoundException {
-    final JPanel panel = new JPanel(new BorderLayout());		    
-    //adds Address book
-    panel.add(mainProfile(), BorderLayout.CENTER);//fields from AddressBook class
-    //adds the picture area 
-    panel.add(background(), BorderLayout.WEST);
-
-    return panel;
-  }
+		return dynamicLabels;
+	}
 
 
 
-  public Container mainProfile(){
-
-    Client client = new Client();
 
 
-    Container contentPane = getContentPane();
+ 
+
+	
+
+	
+	public Container add_form(){
+		 return contentPane;
+	}
+
+	
+	
+	
+  public Container mainProfile(Client client){
+
+   // Client client = new Client();
+
+
+   // Container contentPane = getContentPane();
+      contentPane = getContentPane();
+      contentPane.removeAll();
+      
     contentPane.setBackground(Color.WHITE);
     contentPane.setLayout(new GridLayout(8,4));
 
 
-    nameLabel = new JLabel("Name: ");
-    contentPane.add(nameLabel);
-    String name = client.GetFirstName() + " " + client.GetLastName();
-    nameTextField = new JTextField(name,18);
-    contentPane.add(nameTextField);
-
+    addressLabel = new JLabel("ID:  ");
+    contentPane.add(addressLabel);
+    addressTextField = new JTextField(client.GetID(),18);
+    contentPane.add(addressTextField);
+    
     addressLabel = new JLabel("Address:  ");
     contentPane.add(addressLabel);
     addressTextField = new JTextField(client.GetAddress(),18);
     contentPane.add(addressTextField);
+    
+    nameLabel = new JLabel("Name: ");
+    contentPane.add(nameLabel);
+   String name = client.GetFirstName() + " " + client.GetLastName();
+     nameTextField = new JTextField(name,18);
+    contentPane.add(nameTextField);
 
     cityLabel = new JLabel("City: ");
     contentPane.add(cityLabel);
@@ -282,10 +343,7 @@ public class Table extends JFrame implements ActionListener
     enterButton.addActionListener(this);
     contentPane.add(enterButton);
 
-    JButton exitButton = new JButton("Exit");
-    exitButton.addActionListener(this);
-    contentPane.add(exitButton);
-
+ 
 
 
     return contentPane;
@@ -326,71 +384,128 @@ public class Table extends JFrame implements ActionListener
 
 
 
-  public JPanel background() {
-    String title = "<html><body style='width: 120px; padding: 5px;'>"
-      + "<h1>Do U C Me?</h1>";
-
-    JPanel f = new JPanel(new GridBagLayout());
-    f.setBorder(
-        new TitledBorder("PROFILE") );
-
-    BufferedImage image = new BufferedImage(200,200,BufferedImage.TYPE_INT_RGB);
-    Graphics2D imageGraphics = image.createGraphics();
-
-    GradientPaint gp = new GradientPaint(20f,20f,Color.red,180f,180f,Color.orange);
-    imageGraphics.setPaint(gp);
-
-    imageGraphics.fillRect(0, 0, 200, 200);
-
-    JLabel textLabel = new JLabel(title);
-    textLabel.setSize(textLabel.getPreferredSize());
-
-    Dimension d = textLabel.getPreferredSize();
-    BufferedImage bi = new BufferedImage(d.width,d.height,BufferedImage.TYPE_INT_ARGB);
-
-
-    Graphics g = bi.createGraphics();
-    g.setColor(new Color(255, 255, 255, 128));
-
-
-    g.fillRect(0,0,200,200);
-
-    g.setColor(Color.black);
-    textLabel.paint(g);
+   
 
 
 
-    Graphics g2 = image.getGraphics();
-    g2.drawImage(bi, 20, 20, f);
-
-
-    ImageIcon ii = new ImageIcon(image);
-    JLabel imageLabel = new JLabel(ii);
-
-
-    f.add(imageLabel,null);
-
-
-
-    return f;
-
-  } 
-
-
-
-
-
-
-
-
-
-  /**
-   * @param args not used
+  /*
+   * This is the seach bar to seach on the table  
    */
-  public static void main(String[] args)  throws ClassNotFoundException 
-  {
-    Table example = new Table();
-    example.db_table();
+  public JPanel searchField() {
+
+    JPanel panel = new JPanel(new BorderLayout());
+    JLabel label = new JLabel("Search");
+    panel.add(label, BorderLayout.WEST);
+
+    /// this is the text to appear on the search space      
+    final JTextField filterText = new JTextField(""); 
+
+    /*
+     * adds panel with a filter to the pane
+     */
+    panel.add(filterText, BorderLayout.CENTER);
+
+    // button
+    JButton button = new JButton("Search");				  			        
+    button.addActionListener(new ActionListener() {        	
+      public void actionPerformed(ActionEvent e) {
+        String text = filterText.getText();
+        if (text.length() == 0) {
+          sorter.setRowFilter(null);
+        } else {
+          try {
+            sorter.setRowFilter(
+              RowFilter.regexFilter(text));
+          } catch (PatternSyntaxException pse) {
+            System.err.println("Bad regex pattern");
+          }
+        }
+      }
+    });
+
+    panel.add(button, BorderLayout.EAST);
+
+    return panel;
   }
 
-}
+
+  
+  
+  
+  /*
+   * Split Panel for Table and Profile Panels
+   */
+  public JSplitPane mainLayout(Client client) throws ClassNotFoundException{
+    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainProfile(client), new JScrollPane(sideBar(client.GetID())));   
+    //JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainProfile(client), new JScrollPane(sideBar()));   
+
+    return splitPane;
+  }
+  
+  
+  
+ public JPanel table_seachBar(){
+	 
+ 
+     final JPanel gui = new JPanel(new BorderLayout(5,5));
+ 
+     JScrollPane middle_Bar = null;
+     //JSplitPane middle_Bar = null;
+     try {
+      // middle_Bar = db_tb.mainLayout();	
+     	middle_Bar = db_table();
+     } catch (ClassNotFoundException e) {				 
+       e.printStackTrace();
+     }
+
+     //Adding Search field to the toolBar
+     gui.add(searchField(), BorderLayout.NORTH); //its added to the top		 
+     /*
+      * Adding JPanels to JFrame	
+      */
+
+     gui.add( middle_Bar, BorderLayout.CENTER );//split table & picture
+     return gui;
+ }
+	
+/*
+ 
+  public static void main(String[] args) throws ClassNotFoundException {
+	    final Table db_tb = new Table();
+
+	    Runnable r = new Runnable() {
+
+	      public void run() {
+	        final JFrame frame = new JFrame("West Slope Recovery");
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+/////////////////////////////////////////////	        
+	       //THIS IS ALL YOU NEED TO ADD TO A CLASS.
+	        final JPanel gui = new JPanel(new BorderLayout(5,5));
+ 	        gui.add(db_tb.table_seachBar(), BorderLayout.CENTER);
+/////////////////////////////////////////////
+	       
+ 	        
+	         // JFrame Properties
+	        
+	        frame.setContentPane(gui);
+	        frame.pack();
+	        frame.setLocationRelativeTo(null);               
+	        try {
+	          frame.setLocationByPlatform(true);                   
+	          // This makes the GUI the size of the screen 
+	          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	          frame.setBounds(0,0,screenSize.width, screenSize.height);                   
+	        } catch(Throwable ignoreAndContinue) {
+	        }
+
+	        frame.setVisible(true);
+	      }
+	    };
+	    SwingUtilities.invokeLater(r);
+	  }
+  
+  */
+	}
+
+
